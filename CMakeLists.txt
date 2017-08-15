@@ -24,8 +24,9 @@ set(BIN_NAME "mergecheck")
 # export compile commands
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-# Add custom debug build compiler flags here...
+# Add custom build compiler flags here...
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -03")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fsanitize=address -fno-omit-frame-pointer")
 
 ###########
 ##  Misc  #
