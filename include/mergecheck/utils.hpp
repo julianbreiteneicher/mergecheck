@@ -9,5 +9,5 @@
  */
 void check_error(int error_code, const std::string action);
 
-#endif /* MERGECHECK_STRING_HPP */
+#endif /* MERGECHECK_UTILS_HPP */
 
