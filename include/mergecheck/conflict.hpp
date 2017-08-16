@@ -6,13 +6,12 @@
 #include <string>
 
 typedef struct {
-  const git_index_entry *ancestor;
-  const git_index_entry *our;
-  const git_index_entry *their;
-} Conflict;
+  const git_index_entry *Ancestor;
+  const git_index_entry *Our;
+  const git_index_entry *Their;
+} Conflict ;
 
-std::ostream &printConflict(Conflict c, std::string local_ref,
-                            std::string remote_ref, std::ostream &o);
+std::ostream &printConflict(Conflict C, const std::string &LocalRef,
+                            const std::string &RemoteRef, std::ostream &O);
 
 #endif /* MERGECHECK_CONFLICT_HPP */
-

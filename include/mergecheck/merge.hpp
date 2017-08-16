@@ -4,8 +4,7 @@
 #include <git2.h>
 #include <string>
 
-size_t merge(git_repository *repo, std::string our_branch,
-             std::string their_branch, bool print_conflicts, bool verbose);
+size_t merge(git_repository *Repo, const std::string &OurBranch,
+             const std::string &TheirBranch, bool PrintConflicts, bool Verbose);
 
 #endif /* MERGECHECK_MERGE_HPP */
-

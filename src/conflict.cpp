@@ -1,22 +1,21 @@
 #include "mergecheck/conflict.hpp"
 
-std::ostream &printConflict(Conflict c, std::string local_ref,
-                            std::string remote_ref, std::ostream &o) {
-  if (!c.our) {
-    o << "CONFLICT (modify/delete): " << c.their->path
-      << " deleted in HEAD and modified in " << remote_ref << ".\n";
-  } else if (!c.their) {
-    o << "CONFLICT (modify/delete): " << c.our->path << " deleted in "
-      << local_ref << " and modified in HEAD.\n";
+std::ostream &printConflict(Conflict C, const std::string &LocalRef,
+                            const std::string &RemoteRef, std::ostream &O) {
+  if (C.Our == nullptr) {
+    O << "CONFLICT (modify/delete): " << C.Their->path
+      << " deleted in HEAD and modified in " << RemoteRef << ".\n";
+  } else if (C.Their == nullptr) {
+    O << "CONFLICT (modify/delete): " << C.Our->path << " deleted in "
+      << LocalRef << " and modified in HEAD.\n";
   } else {
     std::string reason = "content";
     // "normal conflict"
-    if (!c.ancestor) {
+    if (C.Ancestor == nullptr) {
       reason = "add/add";
     }
-    o << "CONFLICT (" << reason << "): Merge conflict in " << c.our->path
+    O << "CONFLICT (" << reason << "): Merge conflict in " << C.Our->path
       << "\n";
   }
-  return o;
+  return O;
 }
-

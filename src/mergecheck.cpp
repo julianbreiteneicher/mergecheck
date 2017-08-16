@@ -15,97 +15,97 @@ namespace po = boost::program_options;
 
 int main(int argc, char *argv[]) {
   // global cmd-line arguments
-  std::string repo_path;
-  std::string remote_url;
-  std::string remote_name;
-  bool verbose = false;
-  bool print_conflicts = false;
-  bool add_remote = false;
+  std::string RepoPath;
+  std::string RemoteUrl;
+  std::string RemoteName;
+  bool Verbose = false;
+  bool PrintConflicts = false;
+  bool AddRemote = false;
 
   // cmd-line arguments for 'merge' subcommand
-  std::string merge_our_branch, merge_their_branch;
+  std::string MergeOurBranch, MergeTheirBranch;
 
   // cmd-line arguments for 'rebase' subcommand
-  std::string rebase_upstream_branch, rebase_branch;
-  std::string rebase_onto_commit;
+  std::string RebaseUpstreamBranch, RebaseBranch;
+  std::string RebaseOntoCommit;
 
   /* clang-format off */
-  po::options_description global("Global options");
-  global.add_options()
-    ("repo", po::value<std::string>(&repo_path)->required(),
+  po::options_description Global("Global options");
+  Global.add_options()
+    ("repo", po::value<std::string>(&RepoPath)->required(),
        "Path to the repository")
-    ("remote-url", po::value<std::string>(&remote_url),
+    ("remote-url", po::value<std::string>(&RemoteUrl),
        "Add a new remote to the repository.\n(This is not an im-memory "
        "operation and changes the repository!)")
-    ("remote-name", po::value<std::string>(&remote_name),
+    ("remote-name", po::value<std::string>(&RemoteName),
        "Name for the new  remote (e.g. \'upstream\')")
     ("print-conflicts", "List all conflicts.")
     ("verbose,v", "Be verbose.")("help,h", "Print this help text.")
   ;
 
-  po::options_description global_pos_dummy("Global positional options");
-  global_pos_dummy.add_options()
+  po::options_description GlobalPositionalDummy("Global positional options");
+  GlobalPositionalDummy.add_options()
     ("command", po::value<std::string>(), "command to execute")
     ("subargs", po::value<std::vector<std::string>>(), "Arguments for command")
   ;
 
-  po::options_description all("Allowed options");
-  all.add(global).add(global_pos_dummy);
+  po::options_description All("Allowed options");
+  All.add(Global).add(GlobalPositionalDummy);
 
-  po::positional_options_description pos;
-  pos.add("command", 1).add("subargs", -1);
+  po::positional_options_description Pos;
+  Pos.add("command", 1).add("subargs", -1);
 
-  po::options_description merge_desc("Options for \'merge\' command");
-  merge_desc.add_options()
-    ("our", po::value<std::string>(&merge_our_branch)->required(),
+  po::options_description MergeDesc("Options for \'merge\' command");
+  MergeDesc.add_options()
+    ("our", po::value<std::string>(&MergeOurBranch)->required(),
        "Commit/Ref that reflects the destination tree")
-    ("their", po::value<std::string>(&merge_their_branch)->required(),
+    ("their", po::value<std::string>(&MergeTheirBranch)->required(),
        "Commit/Ref to merge in to \"our\" commit")
   ;
 
-  po::options_description rebase_desc("Options for \'rebase\' command");
-  rebase_desc.add_options()
-    ("upstream", po::value<std::string>(&rebase_upstream_branch)->required(),
+  po::options_description RebaseDesc("Options for \'rebase\' command");
+  RebaseDesc.add_options()
+    ("upstream", po::value<std::string>(&RebaseUpstreamBranch)->required(),
        "Upstream branch to compare against. Can be any valid commit.")
-    ("branch", po::value<std::string>(&rebase_branch)->required(),
+    ("branch", po::value<std::string>(&RebaseBranch)->required(),
        "Branch to rebase onto another branch. Can be any valid commit.")
-    ("onto", po::value<std::string>(&rebase_onto_commit),
+    ("onto", po::value<std::string>(&RebaseOntoCommit),
        "(Optional) If specified, the new commits will start at this point. "
        "Can be any valid commit."
        "If unspecified, the starting point will be <upstream>.")
   ;
   /* clang-format on */
 
-  po::variables_map vm;
-  po::parsed_options parsed = po::command_line_parser(argc, argv)
-                                  .options(all)
-                                  .positional(pos)
+  po::variables_map Vm;
+  po::parsed_options Parsed = po::command_line_parser(argc, argv)
+                                  .options(All)
+                                  .positional(Pos)
                                   .allow_unregistered()
                                   .run();
-  po::store(parsed, vm);
+  po::store(Parsed, Vm);
 
-  if (vm.size() == 0 || vm.count("help") || vm.count("command") != 1) {
+  if (Vm.empty() || Vm.count("help") || Vm.count("command") != 1) {
     std::cout << "USAGE: mergecheck [command] [global options] "
                  "[command-specific options]\n\n";
     std::cout << "Available commands:\n"
               << "  merge\t\t\tJoin two development histories together\n"
               << "  rebase\t\tReapply commits on top of another base tip\n"
               << "\n";
-    std::cout << global << "\n";
-    std::cout << merge_desc << "\n";
-    std::cout << rebase_desc;
+    std::cout << Global << "\n";
+    std::cout << MergeDesc << "\n";
+    std::cout << RebaseDesc;
     return EXIT_SUCCESS;
   }
 
-  verbose = vm.count("verbose") > 0;
-  print_conflicts = vm.count("print-conflicts") > 0;
-  std::string cmd = vm["command"].as<std::string>();
+  Verbose = Vm.count("verbose") > 0;
+  PrintConflicts = Vm.count("print-conflicts") > 0;
+  std::string Command = Vm["command"].as<std::string>();
 
-  bool has_remote_url_param = vm.count("remote-url") > 0;
-  bool has_remote_name_param = vm.count("remote-name") > 0;
-  if (has_remote_url_param && has_remote_name_param) {
-    add_remote = true;
-  } else if (has_remote_url_param ^ has_remote_name_param) {
+  bool HasRemoteUrlParam = Vm.count("remote-url") > 0;
+  bool HasRemoteNameParam = Vm.count("remote-name") > 0;
+  if (HasRemoteUrlParam && HasRemoteNameParam) {
+    AddRemote = true;
+  } else if (HasRemoteUrlParam ^ HasRemoteNameParam) {
     std::cerr << "Error: Options \"remote-url\" and \"remote-name\" have to "
                  "be provided together.";
     return EXIT_FAILURE;
@@ -113,41 +113,41 @@ int main(int argc, char *argv[]) {
 
   // try to do some very simple normalization of the command line arguments,
   // e.g. removing whitespaces and trailing slashes (for urls)
-  trim(repo_path);
-  trim(remote_name);
-  trim(remote_url);
-  while (remote_url.back() == '/') {
-    remote_url.pop_back();
+  Trim(RepoPath);
+  Trim(RemoteName);
+  Trim(RemoteUrl);
+  while (RemoteUrl.back() == '/') {
+    RemoteUrl.pop_back();
   }
 
   // parse command-specifig cmd args
 
   // Collect all the unrecognized options from the first pass. This will
   // include the (positional) command name, so we need to erase that.
-  std::vector<std::string> opts =
-      po::collect_unrecognized(parsed.options, po::include_positional);
-  opts.erase(opts.begin());
+  std::vector<std::string> Opts =
+      po::collect_unrecognized(Parsed.options, po::include_positional);
+  Opts.erase(Opts.begin());
 
-  if (cmd == "merge") {
+  if (Command == "merge") {
     try {
-      po::store(po::command_line_parser(opts).options(merge_desc).run(), vm);
-      po::notify(vm);
-    } catch (const std::exception &ex) {
-      std::cerr << "\n" << ex.what() << "\n\n";
+      po::store(po::command_line_parser(Opts).options(MergeDesc).run(), Vm);
+      po::notify(Vm);
+    } catch (const std::exception &Ex) {
+      std::cerr << "\n" << Ex.what() << "\n\n";
       return EXIT_FAILURE;
     }
-    trim(merge_our_branch);
-    trim(merge_their_branch);
-  } else if (cmd == "rebase") {
+    Trim(MergeOurBranch);
+    Trim(MergeTheirBranch);
+  } else if (Command == "rebase") {
     try {
-      po::store(po::command_line_parser(opts).options(rebase_desc).run(), vm);
-      po::notify(vm);
-    } catch (const std::exception &ex) {
-      std::cerr << "\n" << ex.what() << "\n\n";
+      po::store(po::command_line_parser(Opts).options(RebaseDesc).run(), Vm);
+      po::notify(Vm);
+    } catch (const std::exception &Ex) {
+      std::cerr << "\n" << Ex.what() << "\n\n";
       return EXIT_FAILURE;
     }
-    trim(merge_our_branch);
-    trim(merge_their_branch);
+    Trim(MergeOurBranch);
+    Trim(MergeTheirBranch);
   } else {
     std::cerr << "Error! No legal command was specified! Use \"--help\" for "
                  "details.\n";
@@ -157,39 +157,39 @@ int main(int argc, char *argv[]) {
   // done with command line parsing
 
   int error;
-  git_repository *repo = nullptr;
+  git_repository *Repo = nullptr;
   git_libgit2_init();
 
-  if (verbose) {
+  if (Verbose) {
     std::cout << "Opening repository..." << std::endl;
   }
-  error = git_repository_open(&repo, repo_path.c_str());
-  check_error(error, "opening repository");
+  error = git_repository_open(&Repo, RepoPath.c_str());
+  checkError(error, "opening repository");
 
-  if (add_remote) {
-    addRemote(repo, remote_url, remote_name, verbose);
+  if (AddRemote) {
+    addRemote(Repo, RemoteUrl, RemoteName, Verbose);
   }
 
-  size_t conflicts = 0;
-  if (cmd == "merge") {
-    conflicts = merge(repo, merge_our_branch, merge_their_branch,
-                      print_conflicts, verbose);
-  } else if (cmd == "rebase") {
-    if (vm.count("onto") == 1) {
-      conflicts = rebase(repo, rebase_upstream_branch, rebase_branch,
-                         rebase_onto_commit, print_conflicts, verbose);
+  size_t Conflicts = 0;
+  if (Command == "merge") {
+    Conflicts =
+        merge(Repo, MergeOurBranch, MergeTheirBranch, PrintConflicts, Verbose);
+  } else if (Command == "rebase") {
+    if (Vm.count("onto") == 1) {
+      Conflicts = rebase(Repo, RebaseUpstreamBranch, RebaseBranch,
+                         RebaseOntoCommit, PrintConflicts, Verbose);
     } else {
-      conflicts = rebase(repo, rebase_upstream_branch, rebase_branch,
-                         print_conflicts, verbose);
+      Conflicts = rebase(Repo, RebaseUpstreamBranch, RebaseBranch,
+                         PrintConflicts, Verbose);
     }
   }
 
   // clean up...
-  git_repository_free(repo);
+  git_repository_free(Repo);
   git_libgit2_shutdown();
 
-  if (conflicts > 0) {
-    std::cout << "Found " << conflicts << " conflicts in total." << std::endl;
+  if (Conflicts > 0) {
+    std::cout << "Found " << Conflicts << " conflicts in total." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -198,4 +198,3 @@ int main(int argc, char *argv[]) {
             << std::endl;
   return EXIT_SUCCESS;
 }
-

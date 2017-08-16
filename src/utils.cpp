@@ -4,14 +4,14 @@
 
 #include "mergecheck/utils.hpp"
 
-void check_error(int error_code, const std::string action) {
-  const git_error *error = giterr_last();
-  if (!error_code) {
+void checkError(int ErrorCode, const std::string &Action) {
+  const git_error *Error = giterr_last();
+  if (!ErrorCode) {
     return;
   }
 
-  std::cerr << "Error " << error_code << " " << action << " - "
-            << ((error && error->message) ? error->message : "???") << "\n";
+  std::cerr << "Error " << ErrorCode << " " << Action << " - "
+            << ((Error && Error->message) ? Error->message : "???") << "\n";
 
   exit(EXIT_FAILURE);
 }

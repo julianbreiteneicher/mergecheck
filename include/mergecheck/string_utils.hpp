@@ -6,17 +6,16 @@
 /**
  * Remove all whitespaces from the left.
  */
-std::string &ltrim(std::string &s);
+std::string &LeftTrim(std::string &S);
 
 /**
  * Remove all whitespaces from the right.
  */
-std::string &rtrim(std::string &s);
+std::string &RightTrim(std::string &S);
 
 /**
  * Remove whitespaces from both sides of the string.
  */
-std::string &trim(std::string &s);
+std::string &Trim(std::string &S);
 
 #endif /* MERGECHECK_STRING_UTILS_HPP */
-

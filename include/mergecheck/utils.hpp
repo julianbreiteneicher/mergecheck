@@ -7,7 +7,6 @@
  * If there is an error, print out an error message and exit the program.
  * Otherwise, do nothing.
  */
-void check_error(int error_code, const std::string action);
+void checkError(int ErrorCode, const std::string &Action);
 
 #endif /* MERGECHECK_UTILS_HPP */
-
