@@ -1,0 +1,21 @@
+Checks: '*'
+HeaderFilterRegex: '.*'
+CheckOptions:
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.EnumCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelBack, lower_case
+  - key:             readability-identifier-naming.MemberCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.ParameterCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.UnionCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.VariableCase
+    value:           CamelCase, camelBack
+  - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value:           1
+  - key:             cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions
+    value:           1
