@@ -57,9 +57,10 @@ include(ExternalProject)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 # Libgit2 libs
-find_package(Libgit2 REQUIRED)
-include_directories(${LIBGIT2_INCLUDE_DIR})
-list(APPEND COMMON_LIBS ${LIBGIT2_LIBRARIES})
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(BUILD_CLAR OFF CACHE BOOL "" FORCE)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/libgit2)
+list(APPEND COMMON_LIBS git2)
 
 # Boost libs
 set(Boost_USE_STATIC_LIBS   ON)
