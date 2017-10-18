@@ -33,6 +33,13 @@ Options for 'rebase' command:
                         conflicts is printed.
 ```
 
+## Build instructions:
+```
+mkdir build && cd build
+cmake ..
+make
+```
+
 ## Example usage:
 
 ### merge
