@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 
   if (Conflicts > 0) {
     std::cout << "Found " << Conflicts << " conflicts in total." << std::endl;
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 
   std::cout << "Good news, everyone! Branches can be merged automatically "
